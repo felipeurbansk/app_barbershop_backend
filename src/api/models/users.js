@@ -1,4 +1,4 @@
-const connection = require('../connection');
+const connection = require('../../database/connection');
 
 module.exports = {
 
@@ -8,13 +8,13 @@ module.exports = {
 
         try {
 
-            const user = await connection('users').insert({
+            const [id] = await connection('users').insert({
                 name,
                 email,
                 password
-            }).returning(['id', 'name', 'email']);
+            }).returning('id');
             
-            return user;
+            return { id };
 
         } catch(err) {
             return { error: err.message };

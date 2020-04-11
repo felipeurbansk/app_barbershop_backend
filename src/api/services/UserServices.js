@@ -1,5 +1,5 @@
-const UserModel = require('../database/models/users');
-const utils = require('../utils/utils');
+const UserModel = require('../models/users');
+const utils = require('../../utils/utils');
 const bcrypt = require('bcrypt');
 
 const salt = bcrypt.genSaltSync(10);
@@ -16,7 +16,7 @@ module.exports = {
             
             if ( user_create.error ) return { error: user_create.error };
 
-            return {user_create, token: utils.generateTokenJWT(user.id)};
+            return {user_create, token: utils.generateTokenJWT(user_create)};
 
         } else {
             return {error: "Parameter [email] already exist."};
@@ -96,6 +96,13 @@ module.exports = {
         
         return { success: "Login successfully", user: user_bd, token: utils.generateTokenJWT(user.id) };
         
+    },
+
+    async consult_user( email = false, id = false) {
+
+        if ( !email && !id ) return false;
+
+        return await user_exist( email, id );
     }
 
 }

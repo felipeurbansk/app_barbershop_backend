@@ -1,54 +1,31 @@
 const express = require('express');
 const { celebrate, Joi, Segments } = require('celebrate');
 
+/* Controllers */
+const UserController = require('./api/controllers/UserController');
+const EmployeeController = require('./api/controllers/EmployeeController');
+const LoginController = require('./api/controllers/LoginController');
 
-const UserController = require('./controllers/UserController');
-const EmployeeController = require('./controllers/EmployeeController');
-const LoginController = require('./controllers/LoginController');
+/** Validations */
+const UserValidations = require('./validations/UserValidations');
+const EmployeeValidations = require('./validations/EmployeeValidations');
 
 const routes = express.Router();
 
 /** Authentication */
-routes.post('/login', celebrate({
-    [Segments.BODY]: Joi.object().keys({
-        email: Joi.string().email().required(),
-        password: Joi.string().required()
-    }).unknown()
-}), LoginController.login );
+routes.post('/login',   UserValidations.user_login(), LoginController.login );
 
 /** User */
-routes.get('/user/:id', celebrate({
-    [Segments.PARAMS]: Joi.object().keys({
-        id: Joi.number().integer().required()
-    }).unknown()
-}), UserController.ready);
-
-routes.post('/user', celebrate({
-    [Segments.BODY]: Joi.object().keys({
-        name: Joi.string().required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().required(),
-        repeat_password: Joi.ref('password')
-    }).unknown()
-}) , UserController.create);
-
-routes.delete('/user', celebrate({
-    [Segments.BODY]: Joi.object().keys({
-        id: Joi.number().integer().required()
-    })
-}), UserController.delete);
-
-routes.put('/user', celebrate({
-    [Segments.BODY]: Joi.object().keys({
-        name: Joi.string(),
-        email: Joi.string().email(),
-        password: Joi.string(),
-        repeat_password: Joi.ref('password')
-    }).unknown()
-},), UserController.update);
+routes.get('/user/:id', UserValidations.user_consult(), UserController.ready);
+routes.delete('/user',  UserValidations.user_delete(), UserController.delete);
+routes.post('/user',    UserValidations.user_create() , UserController.create);
+routes.put('/user',     UserValidations.user_update(), UserController.update);
 
 /** Employee */
-routes.post('/employee', EmployeeController.create);
+routes.post('/employee', [
+    UserValidations.user_create(), 
+    EmployeeValidations.employee_create()
+],  EmployeeController.create);
 
 module.exports = routes;
 
