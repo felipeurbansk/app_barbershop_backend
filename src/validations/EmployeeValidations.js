@@ -10,7 +10,7 @@ module.exports = {
         })
     },
 
-    employee_consult() {
+    employee_ready() {
         return celebrate({
             [Segments.PARAMS]: Joi.object().keys({
                 id: Joi.number().integer().required()

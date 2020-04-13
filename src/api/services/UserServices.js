@@ -48,10 +48,9 @@ module.exports = {
         if ( user.password ) 
             user.password = await bcrypt.hash(user.password, salt);
 
-
-        if ( !await user_exist( false, user.user_id ))  
-            return {error: `User [${user.user_id}] not found.`};
-
+        if ( !await user_exist( false, user.id ))
+            return {error: `User [${user.id}] not found.`};
+        
         const user_update = await UserModel.update(user);
 
         if ( !user_update ) 

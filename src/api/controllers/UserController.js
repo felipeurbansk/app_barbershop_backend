@@ -1,5 +1,3 @@
-const connection = require('../../database/connection');
-
 const UserServices = require('../services/UserServices');
 
 module.exports = {
@@ -45,20 +43,20 @@ module.exports = {
 
     async update(req, res) {
 
-        let { user_id, name, email, password } = req.body;
+        let { id, name, email, password } = req.body;
 
         try {
 
-            const user = await UserServices.update( { user_id, name, email, password } );
+            const user = await UserServices.update( { id, name, email, password } );
 
             if ( user.error ) return res.status(400).json( { error: user.error } );
 
             return res.json({
-                success: `User [${user_id}] updated success.`,
+                success: `User [${id}] updated success.`,
                 user: {
-                    id: user_id,
-                    name: name,
-                    email: email
+                    id,
+                    name,
+                    email
                 }
             });
 

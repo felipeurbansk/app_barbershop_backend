@@ -9,12 +9,15 @@ exports.up = function(knex) {
         table.boolean('is_manager').defaultTo(0);
 
         table.integer('user_id').unsigned();
-        table.integer('social_id').unsigned();
-        table.integer('employee_type_contract_id').unsigned();
+        table.integer('company_id').unsigned();
         table.integer('sex_id').unsigned();
         table.integer('category_services').unsigned();
+        table.integer('social_id').unsigned();
+        table.integer('employee_type_contract_id').unsigned();
         
-        table.foreign('user_id').references('users.id');
+        table.foreign('user_id').references('users.id').onDelete('CASCADE').onUpdate('CASCADE');
+        table.foreign('company_id').references('companies.id');
+        
     });
 };
 

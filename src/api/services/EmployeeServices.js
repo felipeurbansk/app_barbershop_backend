@@ -1,29 +1,73 @@
+const bcrypt = require('bcrypt');
+
 const UserModel = require('../models/users')
 const UserServices = require('./UserServices')
 const EmployeeModel = require('../models/employees')
-// const utils = require('../utils/utils');
+
+const salt = bcrypt.genSaltSync(10);
 
 module.exports = {
 
     async create( employee ) {
 
-        const { name, email, password } = employee;
-        
-        if ( await UserServices.consult_user( email ) ) return { error: "Parameter [email] already exist." } 
+        if ( await UserServices.consult_user( employee.email ) ) return { error: "Parameter [email] already exist." } 
 
-        const user = await UserModel.create( { name, email, password } );
+        employee.password = await bcrypt.hash(employee.password, salt);
+
+        const employee_create = await UserModel.create_user_employee( employee );
+        
+        if ( !employee_create ) 
+            return { error: "Employee not created." }
+
+        if ( employee_create.error ) 
+            return employee_create;
+
+        return { id:employee_create, success: "Employee created success." };
+
+    },
+
+    async ready( id ) {
+
+        const employee = EmployeeModel.ready( id );
+
+        if ( !employee )
+            return { error: "Employee not found." }
+        
+        return employee;
+
+    },
+
+    async update( employee ) {
+
+        const { name, password, user_id } = employee;
+
+        user_update = await UserServices.update( { id: user_id, name, password } );
+
+        if ( !user_update )
+            return { error: "User not updated."};
+
+        const employee_update = await EmployeeModel.update( employee );
+
+        if ( !employee_update ) 
+            return { error: "Employee not updated."};
+
+        return employee_update;
+
+    },
     
-        if ( !user ) 
-            return { error: "User not registered." };
+    /** 
+     * NOT USER
+     * 
+     * Use delete cascade in users.
+     * 
+     * */
+    async delete( id ) {
 
-        if ( user.error ) 
-            return { error: user.error };
-        
-        const employee_create = await EmployeeModel.create(employee, user);
+        const employee_delete = await EmployeeModel.delete( id );
 
-        if ( !employee_create ) return { error: "Employee not created" }
+        if ( !employee_delete ) return { error: "Employee not deleted." };
 
-        return employee_create;
+        return employee_delete;
 
     }
 
