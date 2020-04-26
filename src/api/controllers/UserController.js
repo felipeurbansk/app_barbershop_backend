@@ -6,7 +6,7 @@ module.exports = {
 
         const user = await UserServices.create( req.body );
         
-        if ( user.error ) return res.status(401).json( user.error );
+        if ( user.error ) return res.status(user.error.http).json( user.error );
 
         return res.send(user);
 

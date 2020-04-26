@@ -17,7 +17,15 @@ module.exports = {
             return { id };
 
         } catch(err) {
-            return { error: err.message };
+            return { 
+                error: { 
+                    title: "Não foi possível executar essa função.",
+                    message: "Error running this query.",
+                    details: "Ocorreu um erro ao tentar criar um novo usuário. Informe o nosso suporte!",
+                    http: 500,
+                    err
+                }
+            }
         }
 
     },
@@ -32,7 +40,13 @@ module.exports = {
             return user;
 
         } catch(err) {
-            return { error: err.message }
+            return { 
+                title: "Não foi possível executar essa função.",
+                message: "Error running this query.",
+                details: "Ocorreu um erro ao tentar consultar esse usuário. Informe o nosso suporte!",
+                http: 500,
+                err
+            }
         }
 
     },
@@ -50,7 +64,13 @@ module.exports = {
             return user_update;
 
         } catch(err) {
-            return { error: err.message }
+            return { 
+                title: "Não foi possível executar essa função.",
+                message: "Error running this query.",
+                details: "Ocorreu um erro ao tentar atualizar esse usuário. Informe o nosso suporte!",
+                http: 500,
+                err
+            }
         }
 
     },
@@ -66,7 +86,13 @@ module.exports = {
             return user;
 
         } catch(err) {
-            return { error: err.message }
+            return { 
+                title: "Não foi possível executar essa função.",
+                message: "Error running this query.",
+                details: "Ocorreu um erro ao tentar deletar esse usuário. Informe o nosso suporte!",
+                http: 500,
+                err
+            }
         }
         
 
@@ -86,7 +112,13 @@ module.exports = {
 
         } catch (err) {
             
-            return { error: err.message }
+            return { 
+                title: "Usuário não encontrado",
+                message: "No users with this e-mail.",
+                details: "Ocorreu um erro ao tentar consultar esse usuário. Informe o nosso suporte!",
+                http: 500,
+                err
+            }
         }
 
     },
@@ -105,7 +137,13 @@ module.exports = {
 
         } catch (err) {
             
-            return { error: err.message }
+            return { 
+                title: "Erro ao executar essa consulta.",
+                message: "Error running this query.",
+                details: "Ocorreu um erro ao tentar consultar esse usuário. Por favor, informe o nosso suporte!",
+                http: 500,
+                err
+            }
         }
 
     },
@@ -115,15 +153,28 @@ module.exports = {
         try {
 
             const get_user = await connection('users')
+                .join('employees', 'users.id', 'employees.user_id')
                 .where('email', user.email)
-                .first();
+                .select(['users.*', 'employees.company_id']);
             
-            if ( !get_user ) return { error: "Unregistered user." };
+            if ( !get_user ) 
+                return { 
+                    title: "Usuário não encontrado",
+                    message: "No users with this email.",
+                    details: "Não encontramos nenhum usuário com esse e-mail.",
+                    http: 401
+                }
 
             return get_user;
 
         } catch(err) {
-            return { error: err.message }
+            return { 
+                title: "Erro ao consultar usuário",
+                message: "Error running this query.",
+                details: "Não foi possivel consultar esse usuário. Entre em contato com nosso suporte!",
+                http: 500,
+                err
+            }
         }
 
     },
@@ -148,19 +199,37 @@ module.exports = {
                         .then( ( [employee_id] ) => {
                             return employee_id;
                         }).catch( err => {
-                            return { code: err.code, error: err.message }
+                            return { 
+                                title: "Erro ao cadastrar o funcionario",
+                                message: "Employee cannot be created.",
+                                details: "Não foi possivel criar esse funcionario. Entre em contato com nosso suporte!",
+                                http: 500,
+                                err
+                            }
                         });
                     
                     return employee_id;
 
                 }).catch(err => {
-                    return { code: err.code, error: err.message }
+                    return { 
+                        title: "Erro ao cadastrar o usuário",
+                        message: "User cannot be created.",
+                        details: "Não foi possivel criar esse usuário. Entre em contato com nosso suporte!",
+                        http: 500,
+                        err
+                    }
                 })
             
             return user_create;
 
         } catch(err) {
-            return { code: err.code, error: err.message }
+            return { 
+                title: "Erro ao executar essa função",
+                message: "User cannot be created.",
+                details: "Não foi possivel criar esse funcionario. Entre em contato com nosso suporte!",
+                http: 500,
+                err
+            }
         }
     }
 

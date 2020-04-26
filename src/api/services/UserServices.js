@@ -1,5 +1,6 @@
 const UserModel = require('../models/users');
-const utils = require('../../utils/utils');
+const utils = require('../../helpers/utils');
+const response = require('../../helpers/responses');
 const bcrypt = require('bcrypt');
 
 const salt = bcrypt.genSaltSync(10);
@@ -8,7 +9,7 @@ module.exports = {
     
     async create( user ) {
 
-        if ( !await user_exist( user.email ) ) {
+        if ( await user_exist( user.email ) ) {
 
             user.password = await bcrypt.hash(user.password, salt);
 
@@ -19,7 +20,9 @@ module.exports = {
             return {user_create, token: utils.generateTokenJWT(user_create)};
 
         } else {
-            return {error: "Parameter [email] already exist."};
+
+            return  response.responseAPI('EMAIL_ALREADY_EXISTS');
+
         }
 
     },
@@ -83,9 +86,9 @@ module.exports = {
     async login( user ) {
 
         if ( !await user_exist( user.email ) )
-            return {error: `User [${user.email}] not found.`};
+            return {error: `E-mail [${user.email}] not found.`};
         
-        const user_bd = await UserModel.get_user( user );
+        const [user_bd] = await UserModel.get_user( user );
         
         if ( !await bcrypt.compare( user.password, user_bd.password) )
             return { error: "Invalid password.", user };

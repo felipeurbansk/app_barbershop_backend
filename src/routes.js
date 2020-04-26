@@ -39,10 +39,12 @@ routes.delete('/employee', EmployeeValidations.employee_delete(),  EmployeeContr
 
 
 /** Company */
-routes.get('/company/:id', CompanyValidations.company_ready(), CompanyController.ready);
+routes.get('/company/employees', CompanyController.get_employees);
 routes.post('/company', CompanyValidations.company_create(), CompanyController.create);
 routes.put('/company', CompanyValidations.company_update(), CompanyController.update);
 routes.delete('/company/:id', CompanyValidations.company_delete(), CompanyController.delete);
+routes.get('/company/:id', CompanyValidations.company_ready(), CompanyController.ready);
+
 
 module.exports = routes;
 

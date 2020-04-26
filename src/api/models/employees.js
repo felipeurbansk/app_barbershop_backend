@@ -80,6 +80,21 @@ module.exports = {
             return { error: err.message }
         }
 
+    },
+
+    async get_all_company_id( company_id ) {
+        console.log(company_id)
+        try {
+            const employees_all = await connection('employees')
+                .join('users', 'users.id', 'employees.user_id')
+                .where('employees.company_id', '=', company_id)
+                .select(['employees.*', 'users.name', 'users.email']);
+            
+            return employees_all;
+
+        } catch(err) {
+            return { error: err.message }
+        }
     }
 
 }

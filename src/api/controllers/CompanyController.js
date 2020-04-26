@@ -1,4 +1,5 @@
 const CompanyServices = require('../services/CompanyServices');
+const EmployeeServices = require('../services/EmployeeServices');
 
 module.exports = {
 
@@ -58,5 +59,21 @@ module.exports = {
         return res.send( { success: company } );
 
     },
+
+    async get_employees(req, res) {
+        
+        const company_id = req.headers.company_id;
+
+        const employees = await EmployeeServices.get_all( company_id );
+    
+        if ( !employees )
+            return res.status(401).json( { error: "Class service not return value." } );
+
+        if ( employees.error )
+            return res.status(401).json( { employees } );
+
+        return res.send( {employees} );
+    
+    }
 
 }

@@ -1,0 +1,18 @@
+{
+
+    "EMAIL_ALREADY_EXISTS": {
+        "title": "E-mail",
+        "message": "Parameter [email] already exist.",
+        "details": "E-mail informado já existe.",
+        "parameter": "email",
+        "http": 401
+    },
+    
+    "EMPLOYEE_NOT_CREATED": {
+        "title": "Erro no cadastro",
+        "message": "User cannot be created.",
+        "details": "Não foi possivel criar esse funcionario. Entre em contato com nosso suporte!",
+        "http": 500
+    }
+
+}
